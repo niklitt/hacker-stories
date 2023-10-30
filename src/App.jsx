@@ -4,6 +4,9 @@ import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
+
+  const title = 'React';
+  
   return (
       <div>
         <h1>Hello World.</h1>
