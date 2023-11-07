@@ -1,7 +1,9 @@
 // import { useState } from 'react'
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
+import * as React from 'react';
 import './App.css'
+
 
 const App = () => {
 
@@ -24,36 +26,32 @@ const App = () => {
     },
   ];
 
+  const [searchTerm, setSearchTerm] = React.useState('');
+
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
+  }
+
+  const searchedStories = stories.filter((story) => 
+    story.title.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
   return (
     <div>
       <h1>My Hack3r Stories.</h1>
-
-      <Search />
-
+      <Search onSearch={handleSearch} />
       <hr />
-
-      <List list={stories}/>
-      
+      <List list={searchedStories}/>
     </div>
   );
 };
 
-const Search = () => {
-  // Now able to perform a task here
-  const handleChange = (event) => {
-    // Synthetic event
-    console.log("Handling change to search bar:" + event);
-    // Value of target (here: input HTML element)
-    console.log(event.target.value);
-  };
-
-  return (
-    <div>
-      <label htmlFor="search">Search: </label>
-      <input id="search" type="text" onChange={handleChange}/>
-    </div>
-  )
-};
+const Search = (props) => (
+  <div>
+    <label htmlFor="search">Search: </label>
+    <input id="search" type="text" onChange={props.onSearch}/>
+  </div>
+)
 
 const List = (props) => (
   <ul>
