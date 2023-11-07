@@ -22,7 +22,7 @@ const list = [
   },
 ];
 
-function App() {
+const App = () => (
 
   // const welcome = {
   //   greeting: 'Howdy',
@@ -32,32 +32,39 @@ function App() {
   // function getTitle(title) {
   //   return title;
   // }
-  
-  return (
-      <div>
-        <h1>
-          My Hack3r Stories.
-        </h1>
+    <div>
+      <h1>My Hack3r Stories.</h1>
 
-        <label htmlFor="search">Search: </label>
-        <input id="search" type="text" />
+      <Search />
 
-        <hr />
+      <hr />
 
-        <ul>
-          {list.map(function (item) {
-            return <li key={item.objectID}>
-              <span>
-                <a href={item.url}>{item.title} : </a>
-              </span>
-              <span>Author: {item.author}, </span>
-              <span>Number of Comments: {item.num_comments}, </span>
-              <span>Points: {item.points}</span>
-            </li>;
-          })}
-        </ul>
-      </div>
-  )
-}
+      <List />
+      <List />
+      
+    </div>
+)
+
+const Search = () => (
+  <div>
+    <label htmlFor="search">Search: </label>
+    <input id="search" type="text" />
+  </div>
+);
+
+const List = () => (
+  <ul>
+    {list.map((item) => (
+        <li key={item.objectID}>
+          <span>
+            <a href={item.url}>{item.title} : </a>
+          </span>
+          <span>Author: {item.author}, </span>
+          <span>Number of Comments: {item.num_comments}, </span>
+          <span>Points: {item.points}</span>
+        </li>
+      ))}
+  </ul>
+);
 
 export default App
