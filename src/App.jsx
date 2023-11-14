@@ -39,36 +39,40 @@ const App = () => {
   return (
     <div>
       <h1>My Hack3r Stories.</h1>
-      <Search onSearch={handleSearch} />
+      <Search search={searchTerm} onSearch={handleSearch} />
       <hr />
       <List list={searchedStories}/>
     </div>
   );
 };
 
-const Search = (props) => (
+const Search = ({search, onSearch}) => (
   <div>
     <label htmlFor="search">Search: </label>
-    <input id="search" type="text" onChange={props.onSearch}/>
+    <input 
+      id="search"
+      type="text"
+      value={search}
+      onChange={onSearch}/>
   </div>
 )
 
-const List = (props) => (
+const List = ({list}) => (
   <ul>
-    {props.list.map((item) => (
+    {list.map((item) => (
       <Item key={item.objectID} item={item}/>
     ))}
   </ul>
 );
 
-const Item = (props) => (
-  <li key={props.item.objectID}>
+const Item = ({item}) => (
+  <li key={item.objectID}>
     <span>
-      <a href={props.item.url}>{props.item.title} : </a>
+      <a href={item.url}>{item.title} : </a>
     </span>
-    <span>Author: {props.item.author}, </span>
-    <span>Number of Comments: {props.item.num_comments}, </span>
-    <span>Points: {props.item.points}</span>
+    <span>Author: {item.author}, </span>
+    <span>Number of Comments: {item.num_comments}, </span>
+    <span>Points: {item.points}</span>
   </li>
 );
 
