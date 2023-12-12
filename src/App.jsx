@@ -4,6 +4,17 @@
 import * as React from 'react';
 import './App.css'
 
+const useStorageState = (key, initialState) => {
+  const [value, setValue] = React.useState(
+    localStorage.getItem(key) || initialState
+  );
+
+  React.useEffect(() => {
+    localStorage.setItem(key, value);
+  }, [value, key]);
+
+  return [value, setValue];
+};
 
 const App = () => {
 
@@ -26,7 +37,11 @@ const App = () => {
     },
   ];
 
-  const [searchTerm, setSearchTerm] = React.useState('');
+  const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
+
+  React.useEffect( () => {
+    localStorage.setItem('search', searchTerm);
+  }, [searchTerm]);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
@@ -39,23 +54,44 @@ const App = () => {
   return (
     <div>
       <h1>My Hack3r Stories.</h1>
-      <Search search={searchTerm} onSearch={handleSearch} />
+      <InputWithLabel
+        id="search"
+        value = {searchTerm}
+        isFocused
+        onInputChange = {handleSearch} 
+      >
+        <strong>Search:</strong>
+      </InputWithLabel>
       <hr />
       <List list={searchedStories}/>
     </div>
   );
 };
 
-const Search = ({search, onSearch}) => (
-  <div>
-    <label htmlFor="search">Search: </label>
-    <input 
-      id="search"
-      type="text"
-      value={search}
-      onChange={onSearch}/>
-  </div>
-)
+//No idea wtf &nbsp is used for exactly
+//autoFocus is the same as autoFocus={true}
+const InputWithLabel = ({id, value, type = 'text', onInputChange, isFocused, children}) => {
+  const inputRef = React.useRef();
+
+  React.useEffect(() => {
+    if(isFocused && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isFocused]);
+  return (
+    <>
+      <label htmlFor={id}>{children}</label>
+      &nbsp; /* wtf is this?????? *\
+      <input 
+        id={id}
+        type={type}
+        value={value}
+        autoFocus = {isFocused}
+        onChange={onInputChange}/>
+    </>
+  );
+};
+
 
 const List = ({list}) => (
   <ul>
@@ -66,7 +102,7 @@ const List = ({list}) => (
 );
 
 const Item = ({item}) => (
-  <li key={item.objectID}>
+  <li>
     <span>
       <a href={item.url}>{item.title} : </a>
     </span>
