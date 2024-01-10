@@ -47,6 +47,7 @@ const App = () => {
   const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
   const [stories, setStories] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
+  const [isError, setIsError] = React.useState(false);
 
   React.useEffect(() => {
     setIsLoading(true);
@@ -54,7 +55,7 @@ const App = () => {
     getAsyncStories().then(result => {
       setStories(result.data.stories);
       setIsLoading(false);
-    });
+    }).catch(() => setIsError(true));
   }, []);
 
   const handleRemoveStory = (item) => {
@@ -77,6 +78,7 @@ const App = () => {
     story.title.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
+  // In error handling block, if false it skips, if true it returns what's after the &&. better than ternary operator
   return (
     <div>
       <h1>My Hack3r Stories.</h1>
@@ -89,6 +91,9 @@ const App = () => {
         <strong>Search:</strong>
       </InputWithLabel>
       <hr />
+
+      {isError && <p>Something went wrong with gathering data....??</p>} 
+
       {isLoading ? (
         <p>Loading...</p>
       ) : (
