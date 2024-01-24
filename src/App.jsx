@@ -38,10 +38,10 @@ const initialStories = [
 ];
 
 /** Correct way to gather data */
-const getAsyncStories = () =>
-  new Promise((resolve) =>
-    setTimeout(() => resolve({ data: { stories: initialStories } }), 2000)
-  );
+// const getAsyncStories = () =>
+//   new Promise((resolve) =>
+//     setTimeout(() => resolve({ data: { stories: initialStories } }), 2000)
+//   );
 
 /** Throws an error when trying to gather data */
 // const getAsyncStories = () =>
@@ -91,9 +91,12 @@ const App = () => {
   // const [isError, setIsError] = React.useState(false);
 
   React.useEffect(() => {
+    if (!searchTerm) return; // pretty way to do it
+    // if (searchTerm === "") return; // gross way to do it
+
     dispatchStories({ type: "STORIES_FETCH_INIT" });
 
-    fetch(`${API_ENDPOINT}react`)
+    fetch(`${API_ENDPOINT}${searchTerm}`)
       .then((response) => response.json())
       .then((result) => {
         dispatchStories({
@@ -102,7 +105,7 @@ const App = () => {
         });
       })
       .catch(() => dispatchStories({ type: "STORIES_FETCH_FAILURE" }));
-  }, []);
+  }, [searchTerm]);
 
   const handleRemoveStory = (item) => {
     dispatchStories({
@@ -118,10 +121,6 @@ const App = () => {
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
-
-  const searchedStories = stories.data.filter((story) =>
-    story.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   // In error handling block, if false it skips, if true it returns what's after the &&. better than ternary operator
   return (
@@ -142,7 +141,7 @@ const App = () => {
       {stories.isLoading ? (
         <p>Loading...</p>
       ) : (
-        <List list={searchedStories} onRemoveItem={handleRemoveStory} />
+        <List list={stories.data} onRemoveItem={handleRemoveStory} />
       )}
     </div>
   );
