@@ -2,7 +2,7 @@
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
 import * as React from "react";
-import axios from 'axios';
+import axios from "axios";
 import "./App.css";
 
 const API_ENDPOINT = "https://hn.algolia.com/api/v1/search?query=";
@@ -93,21 +93,33 @@ const App = () => {
 
   const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`);
 
-  const handleFetchStories = React.useCallback(() => {
+  const handleFetchStories = React.useCallback(async () => {
     if (!searchTerm) return;
 
     dispatchStories({ type: "STORIES_FETCH_INIT" });
+    try {
+      const result = await axios.get(url);
 
-    axios.get(url)
-      // .then((response) => response.json()) // before using axios
-      .then((result) => {
-        dispatchStories({
-          type: "STORIES_FETCH_SUCCESS",
-          payload: result.data.hits,
-        });
-      })
-      .catch(() => dispatchStories({ type: "STORIES_FETCH_FAILURE" }));
+    dispatchStories({
+      type: 'STORIES_FETCH_SUCCESS',
+      payload: result.data.hits,
+    });
+    } catch {
+      dispatchStories({ type: "STORIES_FETCH_FAILURE" })
+    }
   }, [url]);
+
+  //   axios // before switching to async/await
+  //     .get(url)
+  //     // .then((response) => response.json()) // before using axios
+  //     .then((result) => {
+  //       dispatchStories({
+  //         type: "STORIES_FETCH_SUCCESS",
+  //         payload: result.data.hits,
+  //       });
+  //     })
+  //     .catch(() => dispatchStories({ type: "STORIES_FETCH_FAILURE" }));
+  // }, [url]);
 
   React.useEffect(() => {
     handleFetchStories();
