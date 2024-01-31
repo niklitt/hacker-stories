@@ -90,12 +90,14 @@ const App = () => {
   // const [isLoading, setIsLoading] = React.useState(false);
   // const [isError, setIsError] = React.useState(false);
 
+  const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchTerm}`);
+
   const handleFetchStories = React.useCallback(() => {
     if (!searchTerm) return;
 
-    dispatchStories({ type: 'STORIES_FETCH_INIT'});
+    dispatchStories({ type: "STORIES_FETCH_INIT" });
 
-    fetch(`${API_ENDPOINT}${searchTerm}`)
+    fetch(url)
       .then((response) => response.json())
       .then((result) => {
         dispatchStories({
@@ -104,7 +106,7 @@ const App = () => {
         });
       })
       .catch(() => dispatchStories({ type: "STORIES_FETCH_FAILURE" }));
-  }, [searchTerm]);
+  }, [url]);
 
   React.useEffect(() => {
     handleFetchStories();
@@ -138,9 +140,17 @@ const App = () => {
     localStorage.setItem("search", searchTerm);
   }, [searchTerm]);
 
-  const handleSearch = (event) => {
+  const handleSearchInput = (event) => {
     setSearchTerm(event.target.value);
   };
+
+  const handleSearchSubmit = () => {
+    setUrl(`${API_ENDPOINT}${searchTerm}`);
+  };
+
+  // const handleSearch = (event) => { // Used submit pre-button
+  //   setSearchTerm(event.target.value);
+  // };
 
   // In error handling block, if false it skips, if true it returns what's after the &&. better than ternary operator
   return (
@@ -150,10 +160,14 @@ const App = () => {
         id="search"
         value={searchTerm}
         isFocused
-        onInputChange={handleSearch}
+        onInputChange={handleSearchInput}
       >
         <strong>Search:</strong>
       </InputWithLabel>
+      <button type="button" disabled={!searchTerm} onClick={handleSearchSubmit}>
+        Submit
+      </button>
+
       <hr />
 
       {stories.isError && <p>Something went wrong with gathering data....??</p>}
